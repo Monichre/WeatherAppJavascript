@@ -18,6 +18,7 @@ var lib = require('bower-files')({
 
 var del = require('del');
 var jshint = require('gulp-jshint');
+var browserSync = require('browser-sync').create();
 
 // ENVIRONMENT VARIABLE //
 var buildProduction = utilities.env.production;
@@ -71,4 +72,24 @@ gulp.task('jshint', function(){
 	return gulp.src(['js/*.js'])
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
+});
+
+gulp.task('serve', function(){
+	browserSync.init({
+		server: {
+			baseDir:'./',
+			index: "index.html"
+		}
+	});
+
+	gulp.watch(['js/*.js'], ['jsBuild']);
+	gulp.watch(['bower.json'], ['bowerBuild']);
+});
+
+gulp.task('jsBuild', ['browserify', 'jshint'], function(){
+	browserSync.reload();
+});
+
+gulp.task('bowerBuild', ['bower'], function(){
+	browserSync.reload();
 });
